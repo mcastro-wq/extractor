@@ -1,0 +1,30 @@
+name: Actualizar Datos MEF Lambayeque
+
+on:
+  schedule:
+    # Se ejecuta cada 6 horas (00:00, 06:00, 12:00, 18:00 UTC)
+    - cron: '0 */6 * * *'
+  workflow_dispatch: # Permite ejecutarlo manualmente desde GitHub para probar
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Descargar repositorio
+        uses: actions/checkout@v3
+
+      - name: Configurar Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.9'
+
+      - name: Ejecutar script de extracción
+        run: python mef_extractor.py  # Asegúrate que este sea el nombre de tu archivo
+
+      - name: Guardar cambios del JSON
+        run: |
+          git config --local user.email "action@github.com"
+          git config --local user.name "GitHub Action"
+          git add data_gasto_lambayeque.json
+          git commit -m "Actualización automática MEF: $(date)" || echo "No hay cambios"
+          git push
