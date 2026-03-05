@@ -19,13 +19,12 @@ jobs:
           python-version: '3.9'
 
       - name: Ejecutar script de extracción
-        run: python mef_extractor.py
-             python mef_extractor_2025.py # Asegúrate que este sea el nombre de tu archivo
+        run: python mef_extractor.py # Asegúrate que este sea el nombre de tu archivo
 
       - name: Guardar cambios del JSON
         run: |
           git config --local user.email "action@github.com"
           git config --local user.name "GitHub Action"
-          git add data_gasto_lambayeque.json data_gasto_lambayeque_2025.json
+          git add data_gasto_lambayeque.json
           git commit -m "Actualización automática MEF: $(date)" || echo "No hay cambios"
           git push
