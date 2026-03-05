@@ -44,7 +44,8 @@ def generate_seguimiento_detallado():
                         "MONTO_PIA": to_f(r.get('MONTO_PIA')),
                         "MONTO_PIM": to_f(r.get('MONTO_PIM')),
                         "MONTO_CERTIFICADO": to_f(r.get('MONTO_CERTIFICADO')),
-                        "MONTO_CERTIFICADO_ANUAL": to_f(r.get('MONTO_CERTIFICADO_ANUAL')),
+                        "MONTO_COMPROMETIDO": to_f(r.get('MONTO_COMPROMETIDO')),
+                        "MONTO_COMPROMETIDO_ANUAL": to_f(r.get('MONTO_COMPROMETIDO_ANUAL')),
                         "MONTO_DEVENGADO": to_f(r.get('MONTO_DEVENGADO')),
                         "MONTO_GIRADO": to_f(r.get('MONTO_GIRADO'))
                     })
