@@ -3,7 +3,7 @@ from datetime import datetime, timedelta
 
 def generate_seguimiento_detallado():
     # URL de Gasto Diario
-    url = "https://fs.datosabiertos.mef.gob.pe/datastorefiles/2026-Gasto-Diario.csv"
+    url = "http://fs.datosabiertos.mef.gob.pe/datastorefiles/2026-Gasto-Diario.csv"
     headers = {'User-Agent': 'Mozilla/5.0'}
     
     # Código del Pliego Lambayeque
