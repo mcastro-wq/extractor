@@ -3,6 +3,7 @@ import csv
 import json
 import io
 import codecs
+import ssl  # 1. Importar ssl
 from datetime import datetime, timedelta
 import time
 
@@ -27,22 +28,20 @@ def generate_seguimiento_detallado():
     max_retries = 5
     retry_delay = 1
     
+    # 2. Crear el contexto para ignorar el error de certificado vencido del MEF
+    context = ssl._create_unverified_context()
+    
     print(f"🚀 Iniciando extracción optimizada para Lambayeque (Pliego {CODIGO_PLIEGO_LAMBAYEQUE})...")
 
     for attempt in range(max_retries):
         try:
             req = urllib.request.Request(url, headers=headers)
             
-            # Usamos urlopen como un iterable para no cargar los 3GB en memoria
-            with urllib.request.urlopen(req, timeout=1200) as response:
-                # Decodificador progresivo para manejar el streaming de texto
-                # utf-8-sig elimina el BOM si existe
+            # 3. Añadir context=context aquí
+            with urllib.request.urlopen(req, timeout=1200, context=context) as response:
                 decoder = codecs.getreader("utf-8-sig")(response)
-                
-                # DictReader puede recibir el objeto de respuesta directamente (es un iterable)
                 reader = csv.DictReader(decoder)
                 
-                # Limpiar espacios en los nombres de las columnas
                 reader.fieldnames = [f.strip() for f in reader.fieldnames]
                 
                 proyectos_data = []
@@ -52,7 +51,6 @@ def generate_seguimiento_detallado():
                 for r in reader:
                     count_total += 1
                     
-                    # Filtro por Pliego
                     if r.get('PLIEGO') == CODIGO_PLIEGO_LAMBAYEQUE:
                         count_filtered += 1
                         
@@ -72,11 +70,9 @@ def generate_seguimiento_detallado():
                         }
                         proyectos_data.append(proyecto)
 
-                    # Feedback visual cada 100,000 líneas
                     if count_total % 100000 == 0:
                         print(f"📡 Procesando... {count_total} líneas leídas ({count_filtered} registros encontrados)")
 
-                # Generar JSON final
                 hora_peru = datetime.now() - timedelta(hours=5)
                 objeto_final = {
                     "ultima_actualizacion": hora_peru.strftime("%d/%m/%Y %H:%M"),
@@ -90,13 +86,13 @@ def generate_seguimiento_detallado():
                 
                 print(f"✅ ¡Éxito! JSON generado: {file_name}")
                 print(f"📊 Total Lambayeque: {count_filtered} registros de {count_total} procesados.")
-                return # Salir del bucle si tuvo éxito
+                return 
 
         except Exception as e:
             print(f"⚠️ Intento {attempt + 1} fallido: {e}")
             if attempt < max_retries - 1:
                 time.sleep(retry_delay)
-                retry_delay *= 2 # Backoff
+                retry_delay *= 2 
             else:
                 print("🚨 Se agotaron los reintentos. El servidor del MEF podría estar saturado.")
 
